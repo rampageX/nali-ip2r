@@ -5,7 +5,7 @@
  * @date    2015-10-30
 */
 
-#include "ip2region/ip2region.h"
+#include "libip2region/ip2region.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
