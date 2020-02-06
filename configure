@@ -47,7 +47,7 @@ datadir=$datadir
 EOF
 
 cat > config.h << EOF
-#define IPIPDB_PATH "$datadir/ip2region.db"
+#define IP2RDB_PATH "$datadir/ip2region.db"
 EOF
 
 cat > bin/nali2 << EOF

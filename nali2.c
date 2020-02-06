@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "config.h"
 
 int main( int argc, char **argv )
 {
@@ -21,7 +22,7 @@ int main( int argc, char **argv )
     double s_time, c_time;
     memset(&datablock, 0x00, sizeof(datablock_entry));
 
-    dbFile      = "ip2region.db";
+    dbFile      = IP2RDB_PATH;
     algorithm = "B-tree";
     func_ptr  = ip2region_btree_search_string;
 
