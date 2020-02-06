@@ -1,0 +1,115 @@
+#!/bin/sh
+prefix=/usr/local
+if test x"$1" = x"-h" -o x"$1" = x"--help" ; then
+echo "Usage: ./configure [options]"
+echo "  --help               print this message"
+echo "  --prefix=PREFIX      default:/usr/local"
+echo "  --bindir=BINDIR      default:$prefix/bin"
+echo "  --datadir=BINDIR     default:$prefix/share"
+echo ""
+exit 1
+fi
+
+# parse options
+
+for opt do
+    optarg="${opt#*=}"
+    case "$opt" in
+        --prefix=*)
+            prefix="$optarg"
+            ;;
+        --bindir=*)
+            bindir="$optarg"
+            ;;
+        --datadir=*)
+            datadir="$optarg"
+            ;;
+    esac
+done
+
+if test "z$bindir" = "z"
+then
+    bindir=${prefix}/bin
+fi
+
+if test "z$datadir" = "z"
+then
+    datadir=${prefix}/share
+fi
+
+
+# generate config files
+
+cat > config.mak << EOF
+prefix=$prefix
+bindir=$bindir
+datadir=$datadir
+EOF
+
+cat > config.h << EOF
+#define IPIPDB_PATH "$datadir/ip2region.db"
+EOF
+
+cat > bin/nali2 << EOF
+#!/bin/sh
+if test \$# -gt 0
+then
+    echo \$@|perl $datadir/nali2.pl
+else
+    perl $datadir/nali2.pl
+fi
+EOF
+
+cat > bin/nali2-update << EOF
+#!/bin/sh
+qqwry_dat_url="https://cdn.jsdelivr.net/gh/lionsoul2014/ip2region/data/ip2region.db";
+ipipdb_dat_local_path="$datadir/ip2region.db"
+curl=\`which curl\`
+wget=\`which wget\`
+
+if ! test -w \$ipipdb_dat_local_path
+then
+    echo You may need sudo
+    exit 1
+fi
+
+if test -f /tmp/ip2region.db
+then
+    rm -f /tmp/ip2region.db || exit 1
+fi
+
+if test "x\$curl" != "x" &&  test -x \$curl
+then
+    command="\$curl -k --compressed \$ipipdb_dat_url -o /tmp/ip2region.db"
+elif test "x\$wget" != "x" &&  test -x \$wget
+then
+    command="\$wget --no-check-certificate \$ipipdb_dat_url -O /tmp/ip2region.db"
+else
+    echo Error: Please install curl or wget
+    exit 1
+fi
+echo Updating \$ipipdb_dat_local_path
+\$command && mv /tmp/ip2region.db \$ipipdb_dat_local_path && echo Successfully Updated && exit 0
+
+echo Failed to update
+exit 1
+EOF
+
+cat <<EOF
+***** Please Read This *****
+To use all function of nali-ip2r, you need to install the following packages
+
+traceroute (for nali2-traceroute)
+bind-utils (for nali2-dug and nali-nslookup)
+dnsutils (alternative to bind-utils in Debian)
+mtr (for nali2-mtr)
+
+CentOS/RedHat: yum install traceroute bind-utils bind-utils -y
+Debian/Ubuntu: apt-get update; apt-get install traceroute dnsutils bind-utils -y
+EOF
+
+echo '***** Configure Successfully *****'
+echo
+echo "Install:"
+echo 'make && make install'
+echo
