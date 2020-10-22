@@ -62,7 +62,7 @@ EOF
 
 cat > bin/nali2-update << EOF
 #!/bin/sh
-qqwry_dat_url="https://cdn.jsdelivr.net/gh/lionsoul2014/ip2region/data/ip2region.db";
+ipipdb_dat_url="https://cdn.jsdelivr.net/gh/lionsoul2014/ip2region/data/ip2region.db";
 ipipdb_dat_local_path="$datadir/ip2region.db"
 curl=\`which curl\`
 wget=\`which wget\`
