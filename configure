@@ -80,7 +80,7 @@ fi
 
 if test "x\$curl" != "x" &&  test -x \$curl
 then
-    command="\$curl -k --compressed \$ipipdb_dat_url -o /tmp/ip2region.db"
+    command="\$curl -L -k --compressed \$ipipdb_dat_url -o /tmp/ip2region.db"
 elif test "x\$wget" != "x" &&  test -x \$wget
 then
     command="\$wget --no-check-certificate \$ipipdb_dat_url -O /tmp/ip2region.db"
